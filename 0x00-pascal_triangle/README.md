@@ -1,5 +1,5 @@
 # Pascal's Triangle Generator
-##This function generates the Pascal's triangle of a given number.
+## This function generates the Pascal's triangle of a given number.
 
 Usage
 **To use this function, call it with an integer argument:**
