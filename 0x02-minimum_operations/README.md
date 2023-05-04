@@ -19,7 +19,9 @@ Finally, we can return dp[n], which will give us the minimum number of operation
 
 Here's the Python code that implements this algorithm:
 
-`:D``
+```
+:D
+
 ```
 
 The `is_prime` function is used to check whether a number is prime or not, and it's used to return 0 if n is prime. The `minOperations` function uses dynamic programming to calculate the minimum number of operations needed to reach n H characters in the file.`
