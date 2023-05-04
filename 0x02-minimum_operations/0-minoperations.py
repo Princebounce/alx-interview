@@ -1,5 +1,13 @@
+#!/usr/bin/python3
 import math
-
+    """
+    Method for compute the minimum number
+    of operations for task Copy All and Paste
+    Args:
+        n: input value
+        factor_list: List to save the operations
+    Return: the sum of the operations
+    """
 def minOperations(n):
     if n == 1:
         return 0
