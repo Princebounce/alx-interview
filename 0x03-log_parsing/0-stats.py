@@ -1,40 +1,49 @@
-#!/usr/bin/python3
-'''a script that reads stdin line by line and computes metrics'''import sys
-from collections import defaultdict
+import sys
 
-# Initialize metrics
+STATUS_CODES = {
+    '200': 0,
+    '301': 0,
+    '400': 0,
+    '401': 0,
+    '403': 0,
+    '404': 0,
+    '405': 0,
+    '500': 0
+}
+
 total_size = 0
-status_codes = defaultdict(int)
 line_count = 0
 
 try:
-    # Read input from stdin line by line
     for line in sys.stdin:
         # Split the line into components
         try:
-            ip, _, date, request, status, size = line.split()
-            if request != 'GET /projects/260 HTTP/1.1':
-                continue
-            size = int(size)
-            status = int(status)
+            _, _, _, request, status, size = line.split()
         except ValueError:
             # Skip lines that don't match expected format
             continue
 
+        if request != 'GET /projects/260 HTTP/1.1':
+            continue
+
         # Update metrics
-        total_size += size
-        status_codes[status] += 1
+        status = str(status)
+        if status in STATUS_CODES:
+            STATUS_CODES[status] += 1
+        total_size += int(size)
         line_count += 1
 
         # Print metrics every 10 lines
         if line_count % 10 == 0:
-            print(f"Total file size: {total_size}")
-            for code in sorted(status_codes.keys()):
-                print(f"{code}: {status_codes[code]}")
+            print(f"File size: {total_size}")
+            for code in sorted(STATUS_CODES):
+                if STATUS_CODES[code] > 0:
+                    print(f"{code}: {STATUS_CODES[code]}")
 
 except KeyboardInterrupt:
     # Print final metrics on keyboard interrupt
-    print(f"Total file size: {total_size}")
-    for code in sorted(status_codes.keys()):
-        print(f"{code}: {status_codes[code]}")
+    print(f"File size: {total_size}")
+    for code in sorted(STATUS_CODES):
+        if STATUS_CODES[code] > 0:
+            print(f"{code}: {STATUS_CODES[code]}")
 
