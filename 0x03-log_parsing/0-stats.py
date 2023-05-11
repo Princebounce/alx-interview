@@ -1,51 +1,40 @@
-#!/usr/bin/python3
-'''a script that reads stdin line by line and computes metrics'''
+#!/usr/bin/env python3
 import sys
 
-STATUS_CODES = {
-    '200': 0,
-    '301': 0,
-    '400': 0,
-    '401': 0,
-    '403': 0,
-    '404': 0,
-    '405': 0,
-    '500': 0
-}
-
-total_size = 0
-line_count = 0
+# Initialize metrics variables
+total_file_size = 0
+status_codes = {200: 0, 301: 0, 400: 0, 401: 0, 403: 0, 404: 0, 405: 0, 500: 0}
 
 try:
-    for line in sys.stdin:
-        # Split the line into components
+    for i, line in enumerate(sys.stdin, 1):
+        # Parse the input line
+        parts = line.split()
+        if len(parts) != 7:
+            continue
+        ip_address, date, method, path, protocol, status_code, file_size = parts
+        if method != "GET" or protocol != "HTTP/1.1":
+            continue
         try:
-            _, _, _, request, status, size = line.split()
+            status_code = int(status_code)
+            file_size = int(file_size)
         except ValueError:
-            # Skip lines that don't match expected format
             continue
 
-        if request != 'GET /projects/260 HTTP/1.1':
-            continue
+        # Update the metrics
+        total_file_size += file_size
+        status_codes[status_code] += 1
 
-        # Update metrics
-        status = str(status)
-        if status in STATUS_CODES:
-            STATUS_CODES[status] += 1
-        total_size += int(size)
-        line_count += 1
-
-        # Print metrics every 10 lines
-        if line_count % 10 == 0:
-            print(f"File size: {total_size}")
-            for code in sorted(STATUS_CODES):
-                if STATUS_CODES[code] > 0:
-                    print(f"{code}: {STATUS_CODES[code]}")
+        # Print the metrics every 10 lines
+        if i % 10 == 0:
+            print(f"File size: {total_file_size}")
+            for status_code, count in sorted(status_codes.items()):
+                if count > 0:
+                    print(f"{status_code}: {count}")
 
 except KeyboardInterrupt:
-    # Print final metrics on keyboard interrupt
-    print(f"File size: {total_size}")
-    for code in sorted(STATUS_CODES):
-        if STATUS_CODES[code] > 0:
-            print(f"{code}: {STATUS_CODES[code]}")
+    # Print the final metrics on CTRL-C
+    print(f"File size: {total_file_size}")
+    for status_code, count in sorted(status_codes.items()):
+        if count > 0:
+            print(f"{status_code}: {count}")
 
