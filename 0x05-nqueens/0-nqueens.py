@@ -1,3 +1,8 @@
+#!/usr/bin/python3
+"""N queens solution.
+"""
+
+
 import sys
 
 def is_safe(board, row, col, N):
